@@ -4,4 +4,6 @@ const inquirer = require("inquirer");
 const table = require("console.tables");
 const chalk = require("chalk");
 
-const 
+const employee = require('./constructors/employee');
+const department = require('./constructors/department');
+const role = require('./constructors/role');
