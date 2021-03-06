@@ -4,7 +4,9 @@
   "description": "an app designed to track and manage employees",
   "main": "index.js",
   "dependencies": {
+    "chalk": "^4.1.0",
     "console.table": "^0.10.0",
+    "express": "^4.17.1",
     "inquirer": "^8.0.0",
     "mysql": "^2.18.1"
   },
