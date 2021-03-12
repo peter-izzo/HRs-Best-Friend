@@ -5,7 +5,7 @@ USE Employee_Tracker;
 
 CREATE TABLE department (
     id INT NOT NULL AUTO_INCREMENT,
-    name VARCHAR(30) NULL,
+    department_name VARCHAR(30) NULL,
     PRIMARY KEY(id)
 );
 
