@@ -9,7 +9,7 @@ const conn = sql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root",
-    password: "Neverm0re!",
+    password: "root",
     database: "employee_Tracker",
 });
 conn.connect((err) => {
