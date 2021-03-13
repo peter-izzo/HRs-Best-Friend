@@ -1,7 +1,7 @@
 //Dependencies
 const sql = require("mysql");
 const inquirer = require("inquirer");
-const table = require("console.table");
+require("console.table");
 const chalk = require("chalk");
 const PORT = process.env.PORT || 3306;
 
@@ -10,7 +10,7 @@ const conn = sql.createConnection({
     port: 3306,
     user: "root",
     password: "Neverm0re!",
-    database: "Employee_Tracker",
+    database: "employee_Tracker",
 });
 conn.connect((err) => {
     if (err) {
@@ -27,8 +27,8 @@ _____                    _                             _____                    
 |  __| | '_   _ \ | '_ \ | | / _ \ | | | | / _ \ / _ \   | |  | '__| / _  | / __|| |/ / / _ \| '__|
 | |___ | | | | | || |_) || || (_) || |_| ||  __/|  __/   | |  | |   | (_| || (__ |   < |  __/| |   
 \____/ |_| |_| |_|| .__/ |_| \___/  \__, | \___| \___|   \_/  |_|    \__,_| \___||_|\_\ \___||_|   
-               | |                __/ |                                                         
-               |_|               |___/                                                          
+                  | |                __/ |                                                         
+                  |_|               |___/                                                          
 
 ======================================================================================================
 
@@ -53,7 +53,7 @@ function viewDepartments() {
     });
 };
 
-function viewRoles() {
+function viewroles() {
     conn.query("SELECT DISTINCT title AS 'Title' FROM role", function (err, res) {
     console.table(res);
     runPrompt();
@@ -81,7 +81,7 @@ function  viewByMgr() {
         message: "What manager's team do you want to view?"
     })
     .then((answer) => {
-        const query = `SELECT manager_id AS 'Manager ID', title AS 'Title', first_name AS 'First Name', last_name AS 'Last Name', department_name AS 'Department Name' FROM employee INNER JOIN role ON employee.id = role.id INNER JOIN department ON role.department_id = department.id WHERE employee.manager_id = ${answer.manager_id}`;
+        const query = `SELECT ${manager_id} AS 'Manager ID', title AS 'Title', first_name AS 'First Name', last_name AS 'Last Name', department_name AS 'Department Name' FROM employee INNER JOIN role ON employee.id = role.id INNER JOIN department ON role.department_id = department.id WHERE employee.manager_id = ${answer.manager_id}`;
         conn.query(query, { manager_id: answer.manager_id }, function (err, res) {
         console.table(res);
         runPrompt();
@@ -118,19 +118,78 @@ function  addDept() {
     });
 }
 
-function addRoles() {
-    inquirer.prompt({
+function addroles() {
+    inquirer.prompt([
+    {
         name: "title",
         type: "input",
         message: "What role would you like to add?"
-    })
+    },
+    {   
+        name: "salary",
+        type: "input",
+        message: "What is the salary for this role?"
+    },
+    {   
+        name: "department",
+        type: "input",
+        message: "What department number is this role in?"
+    }
+    ])
+    
     .then((answer) => {
-        const query = `INSERT INTO role (title) VALUES ("${answer.title}");`;
-        conn.query(query, { title: answer.title }, function (err, res) {
-        viewRoles();
+        const query = `INSERT INTO role (title, salary, department_id) VALUES ("${answer.title}", ${answer.salary}, ${answer.department});`;
+        conn.query(query, [answer.title, answer.salary, answer.department], function (err, res) {
+        viewroles();
         });
     });
 }
+
+function addEmployees() {
+    inquirer.prompt([
+        {
+            name: "firstName",
+            type: "input",
+            message: "What is the new employee's first name?"
+        },
+        {
+            name: "lastName",
+            type: "input",
+            message: "What is the new employee's last name?"
+        },
+        {
+            name: "newroleID",
+            type: "input",
+            message: "What is the new employee's role id?"
+        },
+        {
+            name: "newManagerID",
+            type: "input",
+            message: "What is the new employee's manager id?"
+        }
+    ])
+    .then((answer) => {
+            const query = `INSERT INTO employee VALUES ("${answer.firstName}", "${answer.lastName}", "${answer.newroleID}", "${answer.newManagerID}");`
+            conn.query(query, [answer.firstName, answer.lastName, answer.newroleID, answer.newManagerID], function (err, res) {
+            viewEmployees();
+        })
+    })
+}
+function updateEmployeeroles() {
+    inquirer.prompt({
+        name: "newrole",
+        type: "input",
+        message: "What role update would you like to enact?"
+    })
+    .then((answer) => {
+        const query = `UPDATE role SET title = ${answer.newrole} WHERE id = 1;`
+        conn.query(query, { newrole: answer.newrole }, function (err, res) {
+        viewroles();
+        })
+    })
+}
+
+
 
 function runPrompt() {
     inquirer.prompt({
@@ -146,8 +205,11 @@ function runPrompt() {
         "View managers",
         "View employees by manager",
         "View total used budget of a department",
-        "Add new departments",
-        "Add employee roles"
+        "Add departments",
+        "Add roles",
+        "Add employees",
+        "Update employee roles",
+
         ]
     })
     .then((answer) => {
@@ -159,7 +221,7 @@ function runPrompt() {
             viewDepartments();
             break;
         case "View roles":
-            viewRoles();
+            viewroles();
             break;
         case "View employees":
             viewEmployees();
@@ -170,14 +232,37 @@ function runPrompt() {
         case "View employees by manager":
             viewByMgr();
             break;
-        case "View the total utilized budget of a department":
+        case "View total used budget of a department":
             viewBudget();
             break;
         case "Add departments":
             addDept();
             break;
         case "Add roles":
-            addRoles();
+            addroles();
+            break;
+        case "Add employees":
+            addEmployees();
+            break;
+
+        case "Update employee roles":
+            updateEmployeeroles();
+            break;
+
+        case "Update employee managers":
+            updateEmployeeManagers();
+            break;
+
+        case "Delete departments":
+            deleteDepartments();
+            break;
+
+        case "Delete roles":
+            deleteroles();
+            break;
+
+        case "Delete employees":
+            deleteEmployees();
             break;
         }
     });
