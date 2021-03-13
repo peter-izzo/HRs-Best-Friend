@@ -22,7 +22,7 @@ Created with JS, MySQL and love :heart:.
 ## Installation :floppy_disk:
   To install this application you should: 
   1. `git clone https://github.com/peter-izzo/HRs-Best-Friend` 
-  2. `cd README-GEN` 
+  2. `cd HRs-Best-Friend` 
   3. `npm install`
 
 ## Usage :warning:
